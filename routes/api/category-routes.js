@@ -12,12 +12,12 @@ router.get('/', (req, res) => {
       attributes: ['category_id', 'id', 'product_name', 'stock', 'price']
     }
   })
-  .then(prodData => {
-    if(!prodData) {
+  .then(categoryData => {
+    if(!categoryData) {
       res.status(404).json({message: 'Requested category not found'});
       return;
     }
-    res.json(prodData);
+    res.json(categoryData);
   })
   .catch(err => {
     console.log(err);
@@ -37,12 +37,12 @@ router.get('/:id', (req, res) => {
       attributes: ['category_id', 'id', 'product_name', 'stock', 'price']
     }
   })
-  .then(prodData => {
-    if(!prodData) {
+  .then(categorydData => {
+    if(!categoryData) {
       res.status(404).json({message: 'Requested category not found'});
       return;
     }
-    res.json(prodData);
+    res.json(categoryData);
   })
   .catch(err => {
     console.log(err);
@@ -52,6 +52,14 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
   // create a new category
+  Category.create({
+    category_name: req.body.category_name
+  })
+  .then(categoryData => res.json(categoryData))
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 router.put('/:id', (req, res) => {
