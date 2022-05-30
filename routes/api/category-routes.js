@@ -39,15 +39,16 @@ router.get('/:id', (req, res) => {
   })
   .then(prodData => {
     if(!prodData) {
-      res.status(404).json({message: 'Requested categories not found'});
+      res.status(404).json({message: 'Requested category not found'});
       return;
     }
     res.json(prodData);
   })
-  .catch(err);
-  console.log(err);
+  .catch(err => {
+    console.log(err);
   res.status(500).json(err)
-});
+    });
+  });
 
 router.post('/', (req, res) => {
   // create a new category
