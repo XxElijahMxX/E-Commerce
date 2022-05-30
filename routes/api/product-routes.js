@@ -8,20 +8,20 @@ router.get("/", (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
   Product.findAll({
-    attributes: ["id", "product_name", "price", "stock"],
+    attributes: ["id", "product_name", "price", "stock", "category_id"],
     include: [
       {
         model: Category,
-        attributes: ["category_name"],
+        attributes: ["category_name", "id"]
       },
       {
         model: Tag,
-        attributes: ["tag_name"],
+        attributes: ["tag_name", "id"]
       }
     ]
   })
     .then((prodData) => res.json(prodData))
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
@@ -32,7 +32,7 @@ router.get("/:id", (req, res) => {
   // be sure to include its associated Category and Tag data
   Product.findOne({
     where: {
-      id: req.params.id,
+      id: req.params.id
     },
     attributes: ["product_name", "id", "category_id", "stock", "price"],
     include: [
@@ -43,19 +43,17 @@ router.get("/:id", (req, res) => {
       {
         model: Tag,
         attributes: ["id", "tag_name"],
-      },
-    ],
+      }
+    ]
   })
     .then((prodData) => {
       if (!prodData) {
-        res
-          .status(404)
-          .json({ message: "Could not find product with this id" });
+        res.status(404).json({ message: "Could not find product with this id" });
         return;
       }
       res.json(prodData);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
@@ -137,6 +135,22 @@ router.put("/:id", (req, res) => {
 
 router.delete("/:id", (req, res) => {
   // delete one product by its `id` value
+  Product.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(prodData => {
+    if (!prodData) {
+      res.status(404).json({ message: "Could not find the product with requested id" });
+      return;
+    }
+    res.json(prodData);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 module.exports = router;
