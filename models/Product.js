@@ -22,12 +22,13 @@ Product.init(
       allowNull: false
     },
     price: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL(10,2),
       allowNull: false,
       validate: {
         isDecimal: true
       }
     },
+    // stock column
     stock: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -36,6 +37,7 @@ Product.init(
         isNumeric: true
       }
     },
+    //category_id column
     category_id: {
       type: DataTypes.INTEGER,
       references: {

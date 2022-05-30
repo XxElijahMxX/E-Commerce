@@ -1,67 +1,68 @@
-const router = require('express').Router();
-const { Product, Category, Tag, ProductTag } = require('../../models');
+const router = require("express").Router();
+const { Product, Category, Tag, ProductTag } = require("../../models");
 
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
   Product.findAll({
-    attributes: ['product_name', 'id', 'category_id', 'stock', 'price'],
+    attributes: ["id", "product_name", "price", "stock"],
     include: [
       {
         model: Category,
-        attributes: ['category_name', 'id']
+        attributes: ["category_name"],
       },
       {
         model: Tag,
-        attributes: ['tag_name', 'id']
+        attributes: ["tag_name"],
       }
     ]
   })
-  .then(prodData => res.json(prodData))
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err);
-  });
+    .then((prodData) => res.json(prodData))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
-
 // get one product
-router.get('/:id', (req, res) => {
+router.get("/:id", (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
   Product.findOne({
     where: {
-      id: req.params.id
+      id: req.params.id,
     },
-    attributes: ['product_name', 'id', 'category_id', 'stock', 'price'],
+    attributes: ["product_name", "id", "category_id", "stock", "price"],
     include: [
       {
         model: Category,
-        attributes: ['id', 'category_name']
+        attributes: ["id", "category_name"],
       },
       {
         model: Tag,
-        attributes: ['id', 'tag_name']
+        attributes: ["id", "tag_name"],
+      },
+    ],
+  })
+    .then((prodData) => {
+      if (!prodData) {
+        res
+          .status(404)
+          .json({ message: "Could not find product with this id" });
+        return;
       }
-    ]
-  })
-  .then(prodData => {
-    if (!prodData) {
-      res.status(404).json({ message: 'Could not find product with this id'});
-      return;
-    }
-    res.json(prodData);
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err);
-  })
+      res.json(prodData);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 // create new product
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -93,7 +94,7 @@ router.post('/', (req, res) => {
 });
 
 // update product
-router.put('/:id', (req, res) => {
+router.put("/:id", (req, res) => {
   // update product data
   Product.update(req.body, {
     where: {
@@ -134,7 +135,7 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete("/:id", (req, res) => {
   // delete one product by its `id` value
 });
 

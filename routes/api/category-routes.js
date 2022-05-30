@@ -7,10 +7,13 @@ router.get('/', (req, res) => {
   // find all categories
   // be sure to include its associated Products
   Category.findAll({
-    include: {
+    attributes: ['id', 'category_name'],
+    include: [
+      {
       model: Product,
       attributes: ['category_id', 'id', 'product_name', 'stock', 'price']
     }
+  ]
   })
   .then(categoryData => {
     if(!categoryData) {
@@ -32,12 +35,15 @@ router.get('/:id', (req, res) => {
     where: {
       id: req.params.id
     },
-    include: {
+    attributes: ['id', 'category_name'],
+    include: [
+      {
       model: Product,
       attributes: ['category_id', 'id', 'product_name', 'stock', 'price']
     }
+  ]
   })
-  .then(categorydData => {
+  .then(categoryData => {
     if(!categoryData) {
       res.status(404).json({message: 'Requested category not found'});
       return;
@@ -64,10 +70,42 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   // update a category by its `id` value
+  Category.update(req.body, {
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(categoryData => {
+    if (!categoryData[0]) {
+      res.status(404).json({ message: 'Could not find a category with this id' });
+      return;
+    }
+    res.json(categoryData);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 router.delete('/:id', (req, res) => {
   // delete a category by its `id` value
+  Category.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(categoryData => {
+    if(!categoryData) {
+      res.status(404).json({ message: 'Could not find a category with this id' });
+      return;
+    }
+    res.json(categoryData);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 module.exports = router;
